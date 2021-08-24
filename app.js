@@ -1,43 +1,40 @@
-document.querySelector("button").addEventListener('click', generateQuotes);
+
 var output = document.querySelector('.out');
 var stopQuote = document.querySelector('#stop-auto-display-quote');
 var startQuote = document.querySelector('#start-auto-display-quote');
 var autoDisplayQuote;
 let crr = 0;
-window.addEventListener('DOMContentLoaded', autoGenerate)
-function generateQuotes() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', ' http://quotes.stormconsultancy.co.uk/quotes.json', true);
+
+let jsonData = []
 
 
-    xhr.onload = function () {
-        if (this.status == 200) {
-            var items = JSON.parse(this.responseText);
-            /* console.log(items);  */
-            crr++;
-            output.innerHTML = `<p id="quote">${items[crr].quote}</p>
-            <h4 id="author">${items[crr].author}</h4>
-            <a id="links" href=${items[crr].permalink} target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
-            `
-/* 
-            for (let i = 0; i < items.length; i++) {
-                output.innerHTML += `<p id="quote">${items[i].quote}</p>
-                <h4 id="author">${items[i].author}</h4>
-                <a id="links" href=${items[i].permalink} target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
-                `
-    
-            } */
-        }
-
-       /*  for (let i = 0; i < items.length; i++) {
-            const element = items[i];
-            console.log(element);
-        } */
-    }
-    xhr.send();
-  /* autoDisplayQuote =  setTimeout(generateQuotes, 2000) */
+/* window.addEventListener('DOMContentLoaded', autoGenerate) */
+async function generateQuotes() {
+  try {
+    const res = await fetch("http://quotes.stormconsultancy.co.uk/quotes.json");
+    jsonData = await res.json();
+    autoGenerate(jsonData);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
+function autoGenerate(dataFromAPI) {
+  const data = dataFromAPI.map(items => {
+      return `
+      <div class="div rounded">
+      <p id="quote">${items.quote}</p>
+            <h4 id="author">${items.author}</h4>
+            <a id="links" href=${items.permalink} target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
+            </div>
+      `;
+  }).join("")
+
+  output.innerHTML = data
+}
+
+generateQuotes();
+/* 
 function autoGenerate() {
     autoDisplayQuote =  setTimeout(autoGenerate, 3000)
     generateQuotes()
@@ -56,4 +53,4 @@ function quoteStart() {
     autoGenerate();
     stopQuote.style.display = "block";
     startQuote.style.display = "none"
-}
+} */
