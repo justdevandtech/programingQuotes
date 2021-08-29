@@ -1,56 +1,22 @@
-
-var output = document.querySelector('.out');
-var stopQuote = document.querySelector('#stop-auto-display-quote');
-var startQuote = document.querySelector('#start-auto-display-quote');
-var autoDisplayQuote;
-let crr = 0;
-
-let jsonData = []
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 
-/* window.addEventListener('DOMContentLoaded', autoGenerate) */
-async function generateQuotes() {
-  try {
-    const res = await fetch("http://quotes.stormconsultancy.co.uk/quotes.json");
-    jsonData = await res.json();
-    autoGenerate(jsonData);
-  } catch (error) {
-    console.log(error);
+const app = express();
+
+app.use(cors());
+
+app.get('/', (req, res) => {
+  if (req.url === '/') {
+fs.readFile(path.join(__dirname, '/public', 'index.html'), 'utf8', (err, data) => {
+  if (err) throw err;
+  res.send(data);
+})
   }
-}
+})
 
-function autoGenerate(dataFromAPI) {
-  const data = dataFromAPI.map(items => {
-      return `
-      <div class="div rounded">
-      <p id="quote">${items.quote}</p>
-            <h4 id="author">${items.author}</h4>
-            <a id="links" href=${items.permalink} target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i></a>
-            </div>
-      `;
-  }).join("")
-
-  output.innerHTML = data
-}
-
-generateQuotes();
-/* 
-function autoGenerate() {
-    autoDisplayQuote =  setTimeout(autoGenerate, 3000)
-    generateQuotes()
-}
-
-stopQuote.addEventListener('click', quoteStop);
-function quoteStop() {
-    clearTimeout(autoDisplayQuote);
-    startQuote.style.display = "block";
-    this.style.display = "none"
-}
-
-startQuote.addEventListener('click', quoteStart);
-function quoteStart() {
-    autoDisplayQuote =  setTimeout(quoteStart, 3000)
-    autoGenerate();
-    stopQuote.style.display = "block";
-    startQuote.style.display = "none"
-} */
+app.listen(4000, () => {
+  console.log('server runing on port 4000');
+})
