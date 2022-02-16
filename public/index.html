@@ -105,7 +105,7 @@
       async function generateQuotes() {
         try {
           const res = await fetch(
-            "http://quotes.stormconsultancy.co.uk/quotes.json"
+            "https://quotes-api-server.herokuapp.com/"
           );
           jsonData = await res.json();
           autoGenerate(jsonData);
